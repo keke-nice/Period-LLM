@@ -1,5 +1,4 @@
 export CUDA_VISIBLE_DEVICES=2
-source activate gpt
 python infer.py \
 --infer_model "./result_Model_new/hook_dynamic_countix_frame5s_base_on_text200000.pth" \
 --json './countix/number_countix_val.json' \

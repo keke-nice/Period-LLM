@@ -1,4 +1,4 @@
-export CUDA_VISIBLE_DEVICES=6
+git export CUDA_VISIBLE_DEVICES=6
 python train.py \
 --json  "./countix/number_countix_train.json" \
 --image_size 224 \
