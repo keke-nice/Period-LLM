@@ -3,7 +3,6 @@ import numpy as np
 import scipy.io as io
 import torch
 import MyDataset
-import MyLoss
 import model
 import torch.nn as nn
 from torch.utils.data import DataLoader

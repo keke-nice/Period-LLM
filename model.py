@@ -36,15 +36,12 @@ sys.path.append('..')
 def adjust_grad(grad, h_Q, k):
     # 计算最后一个维度的平均值
     avg = h_Q.mean(dim=1, keepdim=True)  # [1, 1, 4096]
-    
-    # 定义调整比例
     adjustment = torch.ones_like(avg)
     
     # 增大平均值较小的通道的梯度，缩小平均值较大的通道的梯度
     adjustment[avg < avg.mean()] *= 1 + k
     adjustment[avg >= avg.mean()] *= 1
-    
-    # 调整梯度
+
     grad *= adjustment
     
     return grad
@@ -224,10 +221,10 @@ class BaseNet(nn.Module):
             input2[~input2_mask] = 0
             labels[~label_mask] = 0
             input3[~input3_mask] = 0
-            tokened_input.append(input2)#问题和答案
-            tokened_label.append(labels)#只有答案
+            tokened_input.append(input2)
+            tokened_label.append(labels)
             tokened_infer.append(input3)
-        return tokened_input, tokened_label, tokened_infer#这里是不是写错了？ tokened_label
+        return tokened_input, tokened_label, tokened_infer
 
     def LLM_Train(self, img_feats, tokened_Q, tokened_GT, video_flag):
         # token_image_len = img_feats.size(0) #[2,512]
@@ -279,7 +276,7 @@ class BaseNet(nn.Module):
             self.adjust_grad_hook.update_k(new_k)
 
     def sample_top_p(self, probs, p):
-        probs_sort, probs_idx = torch.sort(probs, dim=-1, descending=True) #从大到小排序
+        probs_sort, probs_idx = torch.sort(probs, dim=-1, descending=True) 
         probs_sum = torch.cumsum(probs_sort, dim=-1)
         mask = probs_sum - probs_sort > p #
         probs_sort[mask] = 0.0
@@ -326,15 +323,15 @@ class BaseNet(nn.Module):
         params = self.llama.params
         assert self.batch_size <= params.max_batch_size, (self.batch_size, params.max_batch_size)
         # assert len(img_feats) == len(token_input)
-        prompts = [t[:t.gt(0).sum()+self.token_image_len-1] for t in token_input]#开头concat了一个0 token,切出来少了一个尾巴2
+        prompts = [t[:t.gt(0).sum()+self.token_image_len-1] for t in token_input]
                 # 找到token最大最小
         min_prompt_size = min([t.gt(0).sum()+self.token_image_len-1 for t in token_input])
         max_prompt_size = max([t.gt(0).sum()+self.token_image_len-1 for t in token_input])
         total_len = min(params.max_seq_len, max_gen_len + max_prompt_size)#256+30
-        tokens = torch.full((self.batch_size, total_len), self.tokenizer.pad_id).to(self.device).long() #填满-1
+        tokens = torch.full((self.batch_size, total_len), self.tokenizer.pad_id).to(self.device).long()
         for k, t in enumerate(prompts):
             tokens[k, : len(t)] = torch.tensor(t).to(self.device).long()
-        input_text_mask = tokens != self.tokenizer.pad_id #padding区域掩码
+        input_text_mask = tokens != self.tokenizer.pad_id 
         start_pos = min_prompt_size
         prev_pos = 0
         for cur_pos in range(start_pos, total_len):
@@ -363,7 +360,7 @@ class BaseNet(nn.Module):
             t = t[len(prompts[i]): len(prompts[i]) + max_gen_len]
             # cut to eos tok if any
             try:
-                t = t[: t.index(self.tokenizer.eos_id)] #去除尾巴
+                t = t[: t.index(self.tokenizer.eos_id)] 
             except ValueError:
                 pass
             decoded.append(self.tokenizer.decode(t))
@@ -386,7 +383,7 @@ class BaseNet(nn.Module):
             em=None
             self.token_image_len=0
         # Tokenizer
-        _, _, token_input = self.tokenize(question_all, question_all, video_flag)#两个同样的问题拼接
+        _, _, token_input = self.tokenize(question_all, question_all, video_flag)
         token_input = torch.stack(token_input, dim=0).to(self.device)#[1,128]
         caption = self.generate(em, token_input)
         return caption
