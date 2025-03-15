@@ -69,7 +69,21 @@ from datasets import load_dataset
 dataset = load_dataset("kekeYeah/Countix-QA")
 ```
 
-## Installation
+## Resisting Logical Oblivion
+
+In the code, the **RLO optimization strategy** is implemented using the following function `adjust_grad`, which dynamically adjusts the gradient of each feature channel during training:
+
+```python
+@unserializable_hook
+def adjust_grad(grad, h_Q, iter_num, max_iter, beta):
+    avg = h_Q.mean(dim=1, keepdim=True)
+    c_bar = avg.mean()
+    adjustment = torch.ones_like(avg)
+    adjustment[avg < c_bar] *= (1 + beta * torch.exp(iter_num / max_iter))
+    adjustment[avg >= c_bar] *= 1
+    grad *= adjustment
+    return grad
+```
 
 ### Prerequisites
 
