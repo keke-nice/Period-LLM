@@ -2,13 +2,13 @@
 
 This repository contains the code for **Period-LLM**, a multimodal large language model designed to enhance the performance of periodic tasks across various modalities. This work is accepted and presented at **CVPR 2025**.
 
-![top_fig](\fig\top_fig.png)
+![top_fig](fig/top_fig.png)
 
 ## Abstract
 
 Periodic or quasi-periodic phenomena reveal intrinsic characteristics in various natural processes, such as weather patterns, movement behaviors, traffic flows, and biological signals. Given that these phenomena span multiple modalities, the capabilities of Multimodal Large Language Models (MLLMs) offer promising potential to effectively capture and understand their complex nature. However, current MLLMs struggle with periodic tasks due to limitations in: 1）Lack of temporal modeling. 2）Conflict between short and long periods. This paper introduces **Period-LLM**, a multimodal large language model designed to enhance the performance of periodic tasks across various modalities, and constructs a benchmark of various difficulty levels for evaluating the cross-modal periodic capabilities of large models. We adopt an **"Easy to Hard Generalization"** paradigm, starting with relatively simple text-based tasks and progressing to more complex visual and multimodal tasks. This ensures that the model gradually builds robust periodic reasoning capabilities. Additionally, we propose a **"Resisting Logical Oblivion"** optimization strategy to maintain periodic reasoning abilities during semantic alignment. Extensive experiments demonstrate the superiority of **Period-LLM** over existing MLLMs in periodic tasks.
 
-![framework_new](fig\framework_new.png)
+![framework_new](fig/framework_new.png)
 
 ## Data Preparation
 
